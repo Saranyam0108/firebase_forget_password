@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "477439362356",
+    "project_id": "fir-forget-password-2c143",
+    "storage_bucket": "fir-forget-password-2c143.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:477439362356:android:d2c1890c7eae25d4045161",
+        "android_client_info": {
+          "package_name": "com.example.firebase_forget_password"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWI0S8rctIV7lpHYLztj408d194NSyF6M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
