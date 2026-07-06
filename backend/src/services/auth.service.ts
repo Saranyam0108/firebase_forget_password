@@ -42,7 +42,7 @@ export const forgotPasswordService = async (email: string) => {
     throw new Error("Email is required");
   }
 
-console.log("Email received:", email);
+  console.log("Email received:", email);
 
   const user = await prisma.user.findUnique({
     where: {
@@ -56,15 +56,15 @@ console.log("Email received:", email);
     throw new Error("User not found");
   }
 
-  // Render URL
   const resetLink =
     `https://firebase-forget-password.onrender.com/auth/reset?email=${encodeURIComponent(email)}`;
 
   console.log("RESET LINK =", resetLink);
 
-  await sendResetEmail(email, resetLink);
+  // TEMPORARY TEST
+  // await sendResetEmail(email, resetLink);
 
-  return "Password reset email sent successfully";
+  return "Testing Successful";
 };
 export const resetPasswordService = async (
   email: string,
@@ -74,11 +74,19 @@ export const resetPasswordService = async (
     throw new Error("Email and Password are required");
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+console.log("Email received:", email);
+
+const allUsers = await prisma.user.findMany();
+
+console.log("All Users:", allUsers);
+
+const user = await prisma.user.findUnique({
+  where: {
+    email,
+  },
+});
+
+console.log("User found:", user);
 
   if (!user) {
     throw new Error("User not found");
