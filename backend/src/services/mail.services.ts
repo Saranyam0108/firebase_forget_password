@@ -25,31 +25,20 @@ export const sendResetEmail = async (
   try {
     console.log("STEP 1: sendResetEmail started");
 
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Reset Your Password",
-
-      html: `
-        <h2>Reset Password</h2>
-
-        <p>Hello,</p>
-
-        <p>Click the button below to reset your password.</p>
-
-        <a href="${resetLink}"
-          style="
-            background:#1976d2;
-            color:white;
-            padding:12px 20px;
-            text-decoration:none;
-            border-radius:5px;
-            display:inline-block;
-            font-weight:bold;">
-          Reset Password
-        </a>
-      `,
-    });
+const info = await Promise.race([
+  transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Reset Your Password",
+    html: `
+      <h2>Reset Password</h2>
+      <a href="${resetLink}">Reset Password</a>
+    `,
+  }),
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Timeout after 15 seconds")), 15000)
+  ),
+]);
 
     console.log("Email Sent Successfully");
     console.log(info);
