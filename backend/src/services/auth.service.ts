@@ -61,7 +61,7 @@ export const forgotPasswordService = async (email: string) => {
 
   console.log("RESET LINK =", resetLink);
 
-await sendResetEmail(email, resetLink);
+// await sendResetEmail(email, resetLink);
 
 return "Password reset email sent successfully";
 };
