@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((error) => {
   if (error) {
-    console.log("SMTP Error:", error);
+    console.error("SMTP Error:", error);
   } else {
     console.log("SMTP Connected Successfully");
   }
@@ -34,14 +34,14 @@ export const sendResetEmail = async (
         <p>Click the button below to reset your password.</p>
 
         <a href="${resetLink}"
-           style="
-             background:#1976d2;
-             color:white;
-             padding:12px 20px;
-             text-decoration:none;
-             border-radius:5px;
-             display:inline-block;
-             font-weight:bold;">
+          style="
+            background:#1976d2;
+            color:white;
+            padding:12px 20px;
+            text-decoration:none;
+            border-radius:5px;
+            display:inline-block;
+            font-weight:bold;">
           Reset Password
         </a>
 
