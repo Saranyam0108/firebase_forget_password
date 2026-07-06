@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:app_links/app_links.dart';
@@ -20,46 +22,62 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final AppLinks appLinks = AppLinks();
+  final AppLinks _appLinks = AppLinks();
 
-  Widget currentPage = const LoginPage();
+  StreamSubscription<Uri>? _linkSubscription;
+
+  Widget _currentPage = const LoginPage();
 
   @override
   void initState() {
     super.initState();
 
-    initDeepLink();
+    _initDeepLink();
 
-    appLinks.uriLinkStream.listen((Uri uri) {
-      openResetPage(uri);
-    });
+    _linkSubscription = _appLinks.uriLinkStream.listen(
+      (Uri uri) {
+        _openResetPage(uri);
+      },
+      onError: (error) {
+        debugPrint("Deep Link Error: $error");
+      },
+    );
   }
 
-  Future<void> initDeepLink() async {
+  Future<void> _initDeepLink() async {
     try {
-      final Uri? uri = await appLinks.getInitialLink();
+      final Uri? uri = await _appLinks.getInitialLink();
 
       if (uri != null) {
-        openResetPage(uri);
+        _openResetPage(uri);
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint("Initial Link Error: $e");
+    }
   }
 
-  void openResetPage(Uri uri) {
+  void _openResetPage(Uri uri) {
     if (uri.scheme == "myapp" && uri.host == "resetpassword") {
-      final email = uri.queryParameters["email"] ?? "";
+      final String email = uri.queryParameters["email"] ?? "";
 
       setState(() {
-        currentPage = ResetPasswordPage(email: email);
+        _currentPage = ResetPasswordPage(email: email);
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: currentPage,
+      title: "Forgot Password",
+      home: _currentPage,
     );
   }
 }

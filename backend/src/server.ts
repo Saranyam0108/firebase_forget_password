@@ -3,6 +3,9 @@ import authRouter from "./routes/auth.route";
 
 const app = express();
 
+// Render assigns the PORT automatically
+const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
 
 // Routes
@@ -12,6 +15,6 @@ app.get("/", (req, res) => {
   res.send("Backend Running Successfully");
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
