@@ -42,11 +42,15 @@ export const forgotPasswordService = async (email: string) => {
     throw new Error("Email is required");
   }
 
+console.log("Email received:", email);
+
   const user = await prisma.user.findUnique({
     where: {
       email,
     },
   });
+
+  console.log("User found:", user);
 
   if (!user) {
     throw new Error("User not found");
