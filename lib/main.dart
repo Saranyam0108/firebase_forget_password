@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:app_links/app_links.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 
 import 'login_page.dart';
 import 'reset_password_page.dart';
@@ -26,7 +26,8 @@ class _MyAppState extends State<MyApp> {
 
   StreamSubscription<Uri>? _linkSubscription;
 
-  Widget _currentPage = const LoginPage();
+  final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -57,12 +58,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _openResetPage(Uri uri) {
-    if (uri.scheme == "myapp" && uri.host == "resetpassword") {
-      final String email = uri.queryParameters["email"] ?? "";
+    if (uri.scheme == "myapp" &&
+        uri.host == "resetpassword") {
+      final email = uri.queryParameters["email"] ?? "";
 
-      setState(() {
-        _currentPage = ResetPasswordPage(email: email);
-      });
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (_) => ResetPasswordPage(email: email),
+        ),
+      );
     }
   }
 
@@ -75,9 +79,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: "Forgot Password",
-      home: _currentPage,
+      home: const LoginPage(),
     );
   }
 }
