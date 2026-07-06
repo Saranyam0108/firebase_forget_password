@@ -2,8 +2,6 @@ import prisma from "../config/prisma";
 import { sendResetEmail } from "./mail.services";
 
 export const registerService = async (email: string, password: string) => {
-
-  // Validation
   if (!email || !password) {
     throw new Error("Email and Password are required");
   }
@@ -17,8 +15,6 @@ export const registerService = async (email: string, password: string) => {
 };
 
 export const loginService = async (email: string, password: string) => {
-
-  // Validation
   if (!email || !password) {
     throw new Error("Email and Password are required");
   }
@@ -42,12 +38,9 @@ export const loginService = async (email: string, password: string) => {
 
 export const forgotPasswordService = async (email: string) => {
 
-  // Validation
   if (!email) {
     throw new Error("Email is required");
   }
-
-  console.log("Email received:", email);
 
   const user = await prisma.user.findUnique({
     where: {
@@ -59,30 +52,20 @@ export const forgotPasswordService = async (email: string) => {
     throw new Error("User not found");
   }
 
-  // Current Deep Link
-  const resetLink = `myapp://resetpassword?email=${email}`;
+  // Render URL
+  const resetLink =
+    `https://firebase-forget-password.onrender.com/auth/reset?email=${encodeURIComponent(email)}`;
 
   console.log("RESET LINK =", resetLink);
 
-  console.log("BEFORE SEND EMAIL");
-
   await sendResetEmail(email, resetLink);
-
-  console.log("AFTER SEND EMAIL");
-
-  console.log("Reset Link:");
-
-  console.log(resetLink);
 
   return "Password reset email sent successfully";
 };
-
 export const resetPasswordService = async (
   email: string,
   password: string
 ) => {
-
-  // Validation
   if (!email || !password) {
     throw new Error("Email and Password are required");
   }
