@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_forget_password/services/api_service.dart';
+
 import 'login_page.dart';
 
 class ResetPasswordPage extends StatefulWidget {
@@ -31,92 +34,95 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   }
 
   Future<void> changePassword() async {
-
-  // Empty Field Validation
-  if (newPasswordController.text.trim().isEmpty ||
-      confirmPasswordController.text.trim().isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Please fill all fields"),
-      ),
-    );
-    return;
-  }
-
-  // Password Length Validation
-  if (newPasswordController.text.trim().length < 6) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Password must be at least 6 characters"),
-      ),
-    );
-    return;
-  }
-
-  // Password Match Validation
-  if (newPasswordController.text.trim() !=
-      confirmPasswordController.text.trim()) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Passwords do not match"),
-      ),
-    );
-    return;
-  }
-
-  setState(() {
-    isLoading = true;
-  });
-
-  try {
-    final response = await ApiService.resetPassword(
-      widget.email,
-      newPasswordController.text.trim(),
-    );
-
-    if (!mounted) return;
-
-    if (response.statusCode == 200) {
+    if (newPasswordController.text.trim().isEmpty ||
+        confirmPasswordController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Password Updated Successfully"),
+          content: Text("Please fill all fields"),
         ),
       );
+      return;
+    }
 
-      await Future.delayed(const Duration(seconds: 1));
+    if (newPasswordController.text.trim().length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password must be at least 6 characters"),
+        ),
+      );
+      return;
+    }
+
+    if (newPasswordController.text.trim() !=
+        confirmPasswordController.text.trim()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Passwords do not match"),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await ApiService.resetPassword(
+        widget.email,
+        newPasswordController.text.trim(),
+      );
 
       if (!mounted) return;
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const LoginPage(),
-        ),
-        (route) => false,
-      );
-    } else {
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Password Updated Successfully"),
+          ),
+        );
+
+        await Future.delayed(const Duration(seconds: 1));
+
+        if (!mounted) return;
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const LoginPage(),
+          ),
+          (route) => false,
+        );
+      } else {
+        String message = "Something went wrong";
+
+        try {
+          final body = jsonDecode(response.body);
+          message = body["message"] ?? message;
+        } catch (_) {
+          message = response.body;
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(response.body),
+          content: Text(e.toString()),
         ),
       );
-    }
-  } catch (e) {
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.toString()),
-      ),
-    );
-  } finally {
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
