@@ -1,17 +1,18 @@
 import nodemailer from "nodemailer";
 
-// Strict secret variable assignment from process memory
 const smtpUser = process.env.EMAIL_USER;
 const smtpPass = process.env.EMAIL_PASS;
 
+// Secure Port 465 Layer Configuration
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
+  port: 465,         // <--- 587 la irunthu 465 secure port-uku maathiyachoo!
+  secure: true,      // <--- Port 465 nala ithu absolute-ah TRUE irukanum!
   auth: {
     user: smtpUser,
     pass: smtpPass,
   },
+  connectionTimeout: 10000, // 10 seconds-la handshake failure aana drop panna timeout
 });
 
 // Verification check log on startup
@@ -27,12 +28,10 @@ export const sendResetEmail = async (email: string, resetLink: string): Promise<
   try {
     console.log("STEP 1: Attempting to send reset email via Brevo to:", email);
 
-    // Safeguard check if server context has variables loaded
     if (!smtpUser || !smtpPass) {
       throw new Error("SMTP Credentials are completely missing from Environment!");
     }
 
-    // Promise race setup with timeout safeguard handling
     await Promise.race([
       transporter.sendMail({
         from: `"AI-Shop Support" <${smtpUser}>`, 
