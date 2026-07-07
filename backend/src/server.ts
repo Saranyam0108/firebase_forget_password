@@ -1,9 +1,8 @@
+import "dotenv/config"; 
 import express from "express";
 import authRouter from "./routes/auth.route";
 
 const app = express();
-
-// Render assigns the PORT automatically
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
