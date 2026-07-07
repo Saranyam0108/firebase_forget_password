@@ -91,14 +91,15 @@ console.log("User found:", user);
     throw new Error("User not found");
   }
 
-  await prisma.user.update({
-    where: {
-      email,
-    },
-    data: {
-      password,
-    },
-  });
+  const updatedUser = await prisma.user.update({
+  where: {
+    email,
+  },
+  data: {
+    password,
+  },
+});
 
-  return "Password Updated Successfully";
-};
+console.log("UPDATED USER =", updatedUser);
+
+return "Password Updated Successfully";
