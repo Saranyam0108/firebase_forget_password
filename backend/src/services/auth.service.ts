@@ -103,3 +103,4 @@ console.log("User found:", user);
 console.log("UPDATED USER =", updatedUser);
 
 return "Password Updated Successfully";
+};
