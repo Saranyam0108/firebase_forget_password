@@ -7,13 +7,12 @@ const smtpPass = process.env.EMAIL_PASS;
 // Secure Port 465 Layer Setup
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
-  port: 465,         
-  secure: true,      
+  port: 587,
+  secure: false, // true only for port 465
   auth: {
-    user: smtpUser,
-    pass: smtpPass,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
-  connectionTimeout: 10000, 
 });
 
 // Verification log context on server launch
